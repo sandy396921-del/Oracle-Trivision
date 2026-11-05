@@ -1,0 +1,20 @@
+ORACLE TRIVISION — VERSION INSTALLABLE (PWA)
+
+CONTENU
+- index.html : application principale
+- manifest.json : identité et réglages d’installation
+- sw.js : cache hors connexion
+- icon.svg : icône
+
+INSTALLATION
+1. Décompressez ce dossier.
+2. Publiez son contenu sur un hébergement HTTPS statique (par exemple GitHub Pages). Il faut publier les quatre fichiers au même niveau.
+3. Sur Android, ouvrez l’adresse HTTPS dans Google Chrome.
+4. Menu ⋮ > Installer l’application (ou Ajouter à l’écran d’accueil).
+
+IMPORTANT
+- L’application doit être servie en HTTPS pour l’installation PWA et le service worker. L’ouverture directe du fichier index.html ne suffit pas pour ces fonctions.
+- Les données sont stockées dans le navigateur de l’appareil (IndexedDB et localStorage). Elles ne se synchronisent pas automatiquement entre appareils. Exportez régulièrement une sauvegarde depuis Paramètres.
+- La reconnaissance automatique des cartes sur photo n’est pas incluse : la photo est conservée et les numéros sont saisis manuellement.
+- L’IA n’est pas activée dans cette version. Les lectures reposent sur vos propres significations enregistrées dans les fiches.
+- Les noms des 57 cartes présents dans le fichier d’origine ont été conservés, y compris vos noms personnalisés pour les cartes 40 à 57. Vérifiez-les avec votre jeu physique avant de remplir les fiches.

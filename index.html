@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ORACLE TRIVISION — Oracle de la Triade</title>
+  <meta name="theme-color" content="#120624">
+  <meta name="description" content="Oracle Trivision — votre bibliothèque personnelle de 57 cartes, tirages et journal.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <style>
+    /* =========================================================================
+       CHARTE GRAPHIQUE ORACLE TRIVISION (AUCUN ROUGE)
+       Noir profond, Violet pourpre, Lilas, Mauve et Détails argentés
+       ========================================================================= */
+    :root {
+      --bg-void: #07030d;
+      --bg-surface: #120722;
+      --bg-card: #1c0d36;
+      --bg-card-hover: #2a1350;
+      
+      --purple-deep: #3b1466;
+      --purple-royal: #5e1f99;
+      --purple-vivid: #8b31e0;
+      
+      --mauve: #ab57eb;
+      --lilas: #cca0fc;
+      --lilas-pale: #f1e4ff;
+      --silver: #e2e4ec;
+      --silver-muted: #9fa3b8;
+      
+      /* Avertissements et vigilances (Ambre mystique / jamais de rouge) */
+      --amber-warn: #e09f3e;
+      --amber-bg: rgba(224, 159, 62, 0.12);
+      
+      --border-silver: rgba(226, 228, 236, 0.18);
+      --border-purple: rgba(171, 87, 235, 0.35);
+      
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --radius-full: 9999px;
+      
+      --shadow-mystic: 0 10px 30px rgba(94, 31, 153, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Cinzel", serif;
+      background-color: var(--bg-void);
+      color: var(--silver);
+      min-height: 100vh;
+      padding-bottom: 95px;
+      overflow-x: hidden;
+    }
+
+    /* En-tête Mystique */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(18, 7, 34, 0.94);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-purple);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mystic-eye-logo {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 0 10px var(--mauve));
+    }
+
+    .brand-text h1 {
+      font-size: 1.15rem;
+      letter-spacing: 2px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff, var(--lilas), var(--silver-muted));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-text p {
+      font-size: 0.65rem;
+      letter-spacing: 1.2px;
+      color: var(--silver-muted);
+      text-transform: uppercase;
+    }
+
+    /* Navigation tactile pour téléphone */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: rgba(14, 5, 26, 0.96);
+      backdrop-filter: blur(18px);
+      border-top: 1px solid var(--border-purple);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 60;
+      padding: 0 4px;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--silver-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.68rem;
+      cursor: pointer;
+      padding: 6px 8px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .nav-btn.active {
+      color: var(--lilas);
+    }
+
+    .nav-btn.active svg {
+      stroke: var(--lilas-pale);
+      filter: drop-shadow(0 0 8px var(--purple-vivid));
+    }
+
+    /* Pages & Vues */
+    .view {
+      display: none;
+      padding: 16px;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Composants UI */
+    .btn {
+      font-family: inherit;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      border-radius: var(--radius-full);
+      padding: 12px 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--purple-deep), var(--purple-royal));
+      color: var(--lilas-pale);
+      border: 1px solid var(--border-purple);
+      box-shadow: 0 4px 16px rgba(94, 31, 153, 0.35);
+    }
+
+    .btn-primary:active {
+      transform: scale(0.97);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--silver);
+      border: 1px solid var(--border-silver);
+    }
+
+    .btn-secondary:active {
+      background: var(--bg-card-hover);
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--lilas);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    input[type="text"], textarea, select {
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-silver);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      color: var(--silver);
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    input[type="text"]:focus, textarea:focus, select:focus {
+      border-color: var(--mauve);
+      box-shadow: 0 0 10px rgba(171, 87, 235, 0.25);
+    }
+
+    /* Grilles et Cartes */
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 12px;
+    }
+
+    .card-tile {
+      background: var(--bg-card);
+      border: 1px solid var(--border-purple);
+      border-radius: var(--radius-md);
+      padding: 8px;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .card-tile:active {
+      transform: scale(0.96);
+    }
+
+    .card-thumb-box {
+      width: 76px;
+      height: 110px;
+      background: #0d0618;
+      border: 1px solid var(--border-silver);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      margin-bottom: 6px;
+    }
+
+    .card-thumb-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-badge {
+      position: absolute;
+      top: 3px;
+      left: 5px;
+      font-size: 0.65rem;
+      font-weight: bold;
+      color: var(--lilas-pale);
+      background: rgba(18, 7, 34, 0.75);
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+
+    .card-tile-name {
+      font-size: 0.75rem;
+      color: var(--silver);
+      font-weight: 600;
+      line-height: 1.15;
+    }
+
+    .card-tile-status {
+      font-size: 0.6rem;
+      color: var(--silver-muted);
+      margin-top: 3px;
+    }
+
+    /* Plateau de Tirage */
+    .spread-slots {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 18px 0;
+    }
+
+    .slot-item {
+      width: 100px;
+      min-height: 145px;
+      border: 2px dashed var(--purple-royal);
+      border-radius: var(--radius-md);
+      background: rgba(28, 13, 54, 0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .slot-item.filled {
+      border: 2px solid var(--mauve);
+      background: var(--bg-card);
+    }
+
+    .slot-title {
+      font-size: 0.65rem;
+      color: var(--silver-muted);
+      margin-bottom: 4px;
+    }
+
+    /* Boîte d'Avertissement (Ambre & Argent, aucun rouge) */
+    .warn-box {
+      background: var(--amber-bg);
+      border: 1px solid var(--amber-warn);
+      color: #ffd899;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      line-height: 1.4;
+      margin: 12px 0;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    /* Rapport d'Interprétation (9 Rubriques) */
+    .report-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-silver);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .report-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--lilas);
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(204, 160, 252, 0.15);
+      padding-bottom: 6px;
+    }
+
+    .report-body {
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--silver);
+    }
+
+    /* Modal / Volet d'édition */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 3, 13, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-sheet {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-purple);
+      border-radius: 24px 24px 0 0;
+      width: 100%;
+      max-width: 620px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 20px 18px 40px;
+      box-shadow: var(--shadow-mystic);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- EN-TÊTE DE L'APPLICATION -->
+  <header class="app-header">
+    <div class="brand">
+      <!-- Logo : Œil mystique entouré de symboles sacrés -->
+      <svg class="mystic-eye-logo" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="46" stroke="#ab57eb" stroke-width="1.2" fill="none" stroke-dasharray="3 3"/>
+        <circle cx="50" cy="50" r="38" stroke="#5e1f99" stroke-width="1.5" fill="none"/>
+        <path d="M 12 50 Q 50 16 88 50 Q 50 84 12 50 Z" stroke="#cca0fc" stroke-width="2.5" fill="none"/>
+        <circle cx="50" cy="50" r="16" fill="#1c0d36" stroke="#ab57eb" stroke-width="2"/>
+        <circle cx="50" cy="50" r="8" fill="#cca0fc"/>
+        <circle cx="47" cy="47" r="2.5" fill="#ffffff"/>
+        <!-- Rayons d'éveil divinatoire -->
+        <line x1="50" y1="5" x2="50" y2="12" stroke="#e2e4ec" stroke-width="2"/>
+        <line x1="50" y1="88" x2="50" y2="95" stroke="#e2e4ec" stroke-width="2"/>
+        <line x1="5" y1="50" x2="12" y2="50" stroke="#e2e4ec" stroke-width="2"/>
+        <line x1="88" y1="50" x2="95" y2="50" stroke="#e2e4ec" stroke-width="2"/>
+      </svg>
+      <div class="brand-text">
+        <h1>ORACLE TRIVISION</h1>
+        <p>Oracle de la Triade • 57 Lames</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       RUBRIQUE 1 & 2 : NOUVEAU TIRAGE & PHOTOGRAPHIER MON TIRAGE
+       ========================================================================= -->
+  <main id="view-tirage" class="view active">
+    <h2 style="font-size:1.15rem; color:var(--lilas-pale); margin-bottom:12px;">Nouveau Tirage & Interprétation</h2>
+
+    <!-- Domaine d'interprétation -->
+    <div class="form-group">
+      <label>1. Domaine de consultation</label>
+      <select id="spread-domain">
+        <option value="Amour et sentiments">❤️ Amour et sentiments</option>
+        <option value="Couple et relations">💍 Couple et relations</option>
+        <option value="Travail et carrière">💼 Travail et carrière</option>
+        <option value="Argent et finances">⚖️ Argent et finances</option>
+        <option value="Famille et entourage">🏡 Famille et entourage</option>
+        <option value="Spiritualité">✨ Spiritualité</option>
+        <option value="État émotionnel">🧠 État émotionnel</option>
+        <option value="Évolution d'une situation">⏳ Évolution d'une situation</option>
+        <option value="Conseils et décisions">🎯 Conseils et décisions</option>
+        <option value="Questions générales" selected>🔮 Questions générales</option>
+      </select>
+    </div>
+
+    <!-- Question libre -->
+    <div class="form-group">
+      <label>2. Votre question précise</label>
+      <input type="text" id="spread-question" placeholder="Écrivez votre question ici (ex : Quelle orientation donner à mon projet ?)">
+    </div>
+
+    <!-- Méthode de tirage -->
+    <div class="form-group">
+      <label>3. Méthode de tirage</label>
+      <select id="spread-method" onchange="changeSpreadMethod(this.value)">
+        <option value="1">1 Carte — Message du jour</option>
+        <option value="3-ppf" selected>3 Cartes — Passé / Présent / Futur</option>
+        <option value="3-soc">3 Cartes — Situation / Obstacle / Conseil</option>
+        <option value="5">5 Cartes — Analyse approfondie</option>
+        <option value="7">7 Cartes — Évolution de la situation</option>
+        <option value="libre">Tirage libre (Personnalisé)</option>
+      </select>
+    </div>
+
+    <!-- BOUTON PRINCIPAL : PHOTOGRAPHIER MON TIRAGE -->
+    <div style="display:flex; flex-direction:column; gap:8px; margin: 16px 0;">
+      <label class="btn btn-primary" style="font-size:1rem; padding:15px;">
+        📷 PHOTOGRAPHIER MON TIRAGE
+        <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="handleSpreadPhoto(event)">
+      </label>
+      <label class="btn btn-secondary" style="font-size:0.85rem;">
+        🖼️ Importer depuis la galerie
+        <input type="file" accept="image/*" style="display:none;" onchange="handleSpreadPhoto(event)">
+      </label>
+    </div>
+
+    <!-- Aperçu de la photo prise -->
+    <div id="spread-photo-container" style="display:none; margin: 10px 0;">
+      <p style="font-size:0.75rem; color:var(--lilas); margin-bottom:4px;">Photographie de vos cartes sur la table :</p>
+      <img id="spread-photo-preview" style="width:100%; max-height:220px; object-fit:cover; border-radius:var(--radius-md); border:1px solid var(--border-purple);" />
+    </div>
+
+    <div class="warn-box" id="scan-warn" style="display:none;">
+      <span>⚠️</span>
+      <div><strong>Identification manuelle :</strong> la photo est conservée avec le tirage. L’application ne reconnaît pas encore automatiquement les cartes : vous devez saisir leurs numéros ci-dessous.</div>
+    </div>
+
+    <!-- Plateau des positions du tirage -->
+    <label style="margin-top:16px;">4. Cartes disposées sur vos positions</label>
+    <div id="spread-board" class="spread-slots"></div>
+
+    <button class="btn btn-primary" style="width:100%; padding:15px; font-size:1rem; margin-top:12px;" onclick="generateSpreadInterpretation()">
+      ✨ Lancer l'Interprétation Complète
+    </button>
+  </main>
+
+  <!-- =========================================================================
+       RUBRIQUE 3 : MES 57 CARTES (BIBLIOTHÈQUE COMPLÈTE)
+       ========================================================================= -->
+  <main id="view-cartes" class="view">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h2 style="font-size:1.15rem; color:var(--lilas-pale);">Mes 57 Cartes</h2>
+      <span id="filled-counter" style="font-size:0.75rem; color:var(--lilas); background:var(--bg-card); padding:4px 10px; border-radius:var(--radius-full); border:1px solid var(--border-purple);">0/57 annotées</span>
+    </div>
+
+    <p style="font-size:0.8rem; color:var(--silver-muted); margin-bottom:12px;">
+      Cliquez sur une carte pour importer sa photo et rédiger vos interprétations personnelles.
+    </p>
+
+    <input type="text" id="search-card-input" placeholder="Rechercher par nom, numéro (1 à 57) ou mot-clé..." oninput="filterCards(this.value)" style="margin-bottom:14px;">
+
+    <div id="cards-grid-container" class="grid-cards"></div>
+  </main>
+
+  <!-- =========================================================================
+       RUBRIQUE 4 : RAPPORT D'INTERPRÉTATION (9 RUBRIQUES COMPLÈTES)
+       ========================================================================= -->
+  <main id="view-interpretation" class="view">
+    <h2 style="font-size:1.15rem; color:var(--lilas-pale); margin-bottom:12px;">Interprétation de l'Oracle</h2>
+
+    <div id="no-interpretation-msg" style="text-align:center; padding:50px 10px; color:var(--silver-muted);">
+      <p style="font-size:1.5rem; margin-bottom:8px;">🔮</p>
+      <p>Aucun tirage en cours d'analyse.<br>Rendez-vous dans l'onglet « Nouveau Tirage » pour lancer votre lecture.</p>
+    </div>
+
+    <div id="interpretation-results" style="display:none;">
+      <!-- 1. Présentation des cartes -->
+      <div class="report-section">
+        <div class="report-title"><span>1.</span> Présentation des cartes reconnues</div>
+        <div class="report-body" id="rep-1-cards"></div>
+      </div>
+
+      <!-- 2. Signification selon position -->
+      <div class="report-section">
+        <div class="report-title"><span>2.</span> Signification de chaque carte selon sa position</div>
+        <div class="report-body" id="rep-2-positions"></div>
+      </div>
+
+      <!-- 3. Analyse des associations -->
+      <div class="report-section">
+        <div class="report-title"><span>3.</span> Analyse des associations</div>
+        <div class="report-body" id="rep-3-associations"></div>
+      </div>
+
+      <!-- 4. Énergie générale -->
+      <div class="report-section">
+        <div class="report-title"><span>4.</span> Énergie générale du tirage</div>
+        <div class="report-body" id="rep-4-energy"></div>
+      </div>
+
+      <!-- 5. Analyse approfondie de la question -->
+      <div class="report-section">
+        <div class="report-title"><span>5.</span> Analyse approfondie de votre question</div>
+        <div class="report-body" id="rep-5-question"></div>
+      </div>
+
+      <!-- 6. Évolution possible -->
+      <div class="report-section">
+        <div class="report-title"><span>6.</span> Évolution possible de la situation</div>
+        <div class="report-body" id="rep-6-evolution"></div>
+      </div>
+
+      <!-- 7. Obstacles & Points de vigilance -->
+      <div class="report-section">
+        <div class="report-title"><span>7.</span> Obstacles & Points de vigilance</div>
+        <div class="report-body" id="rep-7-obstacles"></div>
+      </div>
+
+      <!-- 8. Conseils -->
+      <div class="report-section">
+        <div class="report-title"><span>8.</span> Conseils de l'Oracle</div>
+        <div class="report-body" id="rep-8-advice"></div>
+      </div>
+
+      <!-- 9. Message final -->
+      <div class="report-section">
+        <div class="report-title"><span>9.</span> Message final de l'Oracle</div>
+        <div class="report-body" id="rep-9-final"></div>
+      </div>
+
+      <button class="btn btn-secondary" style="width:100%; margin-top:8px;" onclick="saveCurrentSpreadToHistory()">
+        💾 Sauvegarder ce tirage dans mon historique
+      </button>
+    </div>
+  </main>
+
+  <!-- =========================================================================
+       RUBRIQUE 5 : ANALYSE DES ASSOCIATIONS (2 OU 3 CARTES)
+       ========================================================================= -->
+  <main id="view-associations" class="view">
+    <h2 style="font-size:1.15rem; color:var(--lilas-pale); margin-bottom:12px;">Analyse des Associations</h2>
+    <p style="font-size:0.82rem; color:var(--silver-muted); margin-bottom:14px;">
+      Sélectionnez 2 ou 3 cartes pour explorer leur influence mutuelle et leur signification commune selon vos fiches.
+    </p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:14px;">
+      <div>
+        <label>Carte A</label>
+        <select id="assoc-card-1" onchange="runAssociationStudy()"></select>
+      </div>
+      <div>
+        <label>Carte B</label>
+        <select id="assoc-card-2" onchange="runAssociationStudy()"></select>
+      </div>
+      <div>
+        <label>Carte C (Optionnelle)</label>
+        <select id="assoc-card-3" onchange="runAssociationStudy()">
+          <option value="">-- Aucune --</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="assoc-result-box" class="report-section" style="display:none;">
+      <div class="report-title">Synthèse de la combinaison</div>
+      <div class="report-body" id="assoc-content"></div>
+    </div>
+  </main>
+
+  <!-- =========================================================================
+       RUBRIQUE 6 : HISTORIQUE DE MES TIRAGES
+       ========================================================================= -->
+  <main id="view-historique" class="view">
+    <h2 style="font-size:1.15rem; color:var(--lilas-pale); margin-bottom:12px;">Historique de mes Tirages</h2>
+    
+    <div style="display:flex; gap:8px; margin-bottom:14px;">
+      <input type="text" id="history-search" placeholder="Filtrer par question ou carte..." oninput="renderHistoryList()" style="flex:1;">
+      <select id="history-filter-domain" onchange="renderHistoryList()" style="width:140px;">
+        <option value="">Tous les domaines</option>
+        <option value="Amour">Amour</option>
+        <option value="Travail">Travail</option>
+        <option value="Argent">Argent</option>
+        <option value="Spiritualité">Spiritualité</option>
+      </select>
+    </div>
+
+    <div id="history-container"></div>
+  </main>
+
+  <!-- =========================================================================
+       RUBRIQUE 7 : MES NOTES PERSONNELLES
+       ========================================================================= -->
+  <main id="view-notes" class="view">
+    <h2 style="font-size:1.15rem; color:var(--lilas-pale); margin-bottom:12px;">Mon Carnet de Notes</h2>
+    <p style="font-size:0.8rem; color:var(--silver-muted); margin-bottom:12px;">
+      Espace libre pour consigner vos ressentis, vos intuitions et vos observations divinatoires.
+    </p>
+
+    <div class="form-group">
+      <textarea id="personal-journal" rows="12" placeholder="Écrivez ici vos réflexions quotidiennes, méditations ou découvertes avec la Triade..." oninput="savePersonalNotes(this.value)"></textarea>
+    </div>
+    <span id="notes-status" style="font-size:0.75rem; color:var(--lilas);">Enregistrement automatique actif.</span>
+  </main>
+
+  <!-- =========================================================================
+       RUBRIQUE 8 : PARAMÈTRES & SAUVEGARDE
+       ========================================================================= -->
+  <main id="view-parametres" class="view">
+    <h2 style="font-size:1.15rem; color:var(--lilas-pale); margin-bottom:12px;">Paramètres & Sauvegardes</h2>
+
+    <div class="report-section">
+      <div class="report-title">Sauvegarde complète de votre Oracle</div>
+      <p style="font-size:0.82rem; color:var(--silver-muted); margin-bottom:12px;">
+        Exportez l'intégralité de vos 57 cartes, de vos photos et de votre historique dans un fichier unique pour ne jamais rien perdre ou pour transférer vos données sur un autre appareil.
+      </p>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <button class="btn btn-primary" onclick="exportFullBackup()">📦 Exporter ma bibliothèque & mes tirages</button>
+        <label class="btn btn-secondary">
+          📥 Restaurer une sauvegarde
+          <input type="file" accept=".json" style="display:none;" onchange="importFullBackup(event)">
+        </label>
+      </div>
+    </div>
+
+    <div class="report-section">
+      <div class="report-title">Mode de fonctionnement</div>
+      <p style="font-size:0.82rem; color:var(--silver-muted);">
+        Cette version fonctionne localement, sans abonnement et sans connexion à un service d’intelligence artificielle. Les interprétations utilisent les textes que vous saisissez dans vos fiches. La reconnaissance automatique des cartes et l’interprétation par IA pourront être ajoutées séparément.
+      </p>
+    </div>
+    <div class="report-section">
+      <div class="report-title">Installation sur mon téléphone</div>
+      <p style="font-size:0.82rem; color:var(--silver-muted); margin-bottom:10px;">
+        Après mise en ligne sécurisée (HTTPS), ouvrez cette application dans Chrome sur Android puis utilisez le bouton ci-dessous si votre navigateur le propose, ou le menu ⋮ puis « Installer l’application » / « Ajouter à l’écran d’accueil ».
+      </p>
+      <button id="install-app-btn" class="btn btn-primary" style="width:100%;" onclick="installApp()" disabled>＋ Installer ORACLE TRIVISION</button>
+      <p id="install-help" style="font-size:0.72rem; color:var(--silver-muted); margin-top:8px;">Le bouton devient disponible si Chrome autorise l’installation.</p>
+    </div>
+  </main>
+
+  <!-- BARRE DE NAVIGATION INFÉRIEURE -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="switchTab('view-tirage', this)">
+      <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+      <span>Tirage</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('view-cartes', this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>57 Cartes</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('view-interpretation', this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      <span>Lecture</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('view-associations', this)">
+      <svg viewBox="0 0 24 24"><circle cx="8" cy="12" r="5"/><circle cx="16" cy="12" r="5"/></svg>
+      <span>Assoc.</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('view-historique', this)">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>Journal</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('view-notes', this)">
+      <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span>Notes</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('view-parametres', this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Réglages</span>
+    </button>
+  </nav>
+
+  <!-- =========================================================================
+       MODALE : FICHE DÉTAILLÉE & ÉDITION D'UNE CARTE
+       ========================================================================= -->
+  <div id="card-modal" class="modal-overlay" onclick="if(event.target===this) closeCardModal()">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 id="modal-card-title" style="color:var(--lilas-pale);">Fiche de la Carte</h3>
+        <button class="btn btn-secondary" style="padding:6px 12px; font-size:0.8rem;" onclick="closeCardModal()">✕ Fermer</button>
+      </div>
+
+      <div style="display:flex; gap:14px; align-items:center; margin-bottom:14px;">
+        <div class="card-thumb-box" style="width:90px; height:130px; flex-shrink:0;">
+          <img id="modal-card-img" style="display:none;" />
+          <span id="modal-card-placeholder" style="font-size:2rem; color:var(--mauve);">✦</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label class="btn btn-primary" style="font-size:0.78rem; padding:8px 14px;">
+            📷 Prendre / Importer une photo
+            <input type="file" accept="image/*" style="display:none;" onchange="handleCardPhotoUpload(event)">
+          </label>
+          <span style="font-size:0.7rem; color:var(--silver-muted);">Numéro fixe de la lame : <strong id="modal-card-num-text" style="color:var(--lilas);"></strong></span>
+        </div>
+      </div>
+
+      <!-- Formulaire complet des annotations personnelles -->
+      <div class="form-group">
+        <label>Nom exact de la carte</label>
+        <input type="text" id="edit-name">
+      </div>
+
+      <div class="form-group">
+        <label>Mots-clés (séparés par des virgules)</label>
+        <input type="text" id="edit-keywords" placeholder="Ex: Début, Impulsion, Renouveau">
+      </div>
+
+      <div class="form-group">
+        <label>Ma description & symbolisme personnel</label>
+        <textarea id="edit-description" rows="3" placeholder="Ce que cette carte m'évoque visuellement et symboliquement..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Signification générale</label>
+        <textarea id="edit-general" rows="3" placeholder="Message principal et énergie centrale..."></textarea>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="form-group">
+          <label>Signification Positive (+)</label>
+          <textarea id="edit-positive" rows="3" placeholder="Forces, atouts, bénédictions..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Signification Négative (-)</label>
+          <textarea id="edit-negative" rows="3" placeholder="Excès, pièges, retards..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Interprétation en Amour & Sentiments</label>
+        <textarea id="edit-love" rows="2" placeholder="Pour les célibataires, les couples, les liens du cœur..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Interprétation au Travail & Carrière</label>
+        <textarea id="edit-work" rows="2" placeholder="Dynamique professionnelle, projets, collègues..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Interprétation en Argent & Finances</label>
+        <textarea id="edit-money" rows="2" placeholder="Gestion matérielle, gains, prudence financière..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Interprétation en Spiritualité & Éveil</label>
+        <textarea id="edit-spirituality" rows="2" placeholder="Cheminement de l'âme, intuition, leçons karmiques..."></textarea>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="form-group">
+          <label>Conseils</label>
+          <textarea id="edit-advice" rows="2" placeholder="Ce qu'il convient de faire..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Avertissements</label>
+          <textarea id="edit-warning" rows="2" placeholder="Ce dont il faut se méfier..."></textarea>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%; margin-top:10px; padding:14px;" onclick="saveCardEdits()">
+        💾 Enregistrer mes annotations
+      </button>
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIQUE ORACLE TRIVISION -->
+  <script>
+    /* =========================================================================
+       1. BASE DE DONNÉES OFFICIELLE DES 57 CARTES (INDEXEDDB)
+       Cartes 40 à 57 conservées fidèlement selon votre demande.
+       Descriptions laissées vierges pour ne JAMAIS rien inventer.
+       ========================================================================= */
+    const OFFICIAL_NAMES = {
+      1: "Alpha", 2: "Isolement", 3: "Delta", 4: "Mensonge", 5: "Eau",
+      6: "Racine", 7: "Porte", 8: "Nadir", 9: "Sagesse", 10: "Réussite",
+      11: "Tentation", 12: "Sceau", 13: "Pénitence", 14: "Homme", 15: "Amour",
+      16: "Mutation", 17: "Énergie", 18: "Science", 19: "Prière", 20: "Erreur",
+      21: "Bénédiction", 22: "Choix", 23: "Paix", 24: "Richesse", 25: "Femme",
+      26: "Épreuve", 27: "Doute", 28: "Protection", 29: "Élévation", 30: "Pardon",
+      31: "Ordre", 32: "Illusion", 33: "Naissance", 34: "Initiation", 35: "Nécessité",
+      36: "Voyage", 37: "Lumière", 38: "Arme", 39: "Message",
+      // Liste de référence exacte imposée :
+      40: "Malheur", 41: "Équité", 42: "Désert", 43: "Clé", 44: "Foudre",
+      45: "Temps", 46: "Sacrifice", 47: "Éternité", 48: "Âme", 49: "Adversaire",
+      50: "Papyrus", 51: "Retour", 52: "Silence", 53: "Méditation", 54: "Mort",
+      55: "Fusion", 56: "Frère", 57: "Omega"
+    };
+
+    let dbInstance = null;
+    let cardsCache = [];
+    let currentEditingCardNum = null;
+
+    // État du tirage en cours
+    let currentSpreadSlots = [];
+    let spreadPhotoDataUrl = null;
+    let currentInterpretationData = null;
+
+    // Initialisation IndexedDB
+    function initDatabase() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open("OracleTrivisionDB", 1);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains("cards")) {
+            db.createObjectStore("cards", { keyPath: "number" });
+          }
+          if (!db.objectStoreNames.contains("history")) {
+            db.createObjectStore("history", { keyPath: "id", autoIncrement: true });
+          }
+          if (!db.objectStoreNames.contains("meta")) {
+            db.createObjectStore("meta", { keyPath: "key" });
+          }
+        };
+        req.onsuccess = async (e) => {
+          dbInstance = e.target.result;
+          await seedInitialCardsIfEmpty();
+          await loadCardsCache();
+          resolve();
+        };
+        req.onerror = (err) => reject(err);
+      });
+    }
+
+    async function seedInitialCardsIfEmpty() {
+      const count = await getCount("cards");
+      if (count === 0) {
+        const tx = dbInstance.transaction("cards", "readwrite");
+        const store = tx.objectStore("cards");
+        for (let i = 1; i <= 57; i++) {
+          store.put({
+            number: i,
+            name: OFFICIAL_NAMES[i] || `Lame ${i}`,
+            image: null,
+            keywords: "",
+            description: "",
+            general: "",
+            positive: "",
+            negative: "",
+            love: "",
+            work: "",
+            money: "",
+            spirituality: "",
+            advice: "",
+            warning: "",
+            isFilled: false
+          });
+        }
+        await new Promise(r => tx.oncomplete = r);
+      }
+    }
+
+    function getCount(storeName) {
+      return new Promise((resolve) => {
+        const tx = dbInstance.transaction(storeName, "readonly");
+        const req = tx.objectStore(storeName).count();
+        req.onsuccess = () => resolve(req.result);
+      });
+    }
+
+    async function loadCardsCache() {
+      return new Promise((resolve) => {
+        const tx = dbInstance.transaction("cards", "readonly");
+        const req = tx.objectStore("cards").getAll();
+        req.onsuccess = () => {
+          cardsCache = req.result.sort((a, b) => a.number - b.number);
+          updateFilledCounter();
+          resolve();
+        };
+      });
+    }
+
+    function updateFilledCounter() {
+      const count = cardsCache.filter(c => c.general || c.keywords || c.description).length;
+      const el = document.getElementById("filled-counter");
+      if (el) el.innerText = `${count}/57 annotées`;
+    }
+
+    /* =========================================================================
+       2. GESTION DE LA BIBLIOTHÈQUE & DES FICHES INDIVIDUELLES
+       ========================================================================= */
+    function renderCardsGrid(cards = cardsCache) {
+      const container = document.getElementById("cards-grid-container");
+      if (!container) return;
+      container.innerHTML = "";
+
+      cards.forEach(card => {
+        const tile = document.createElement("div");
+        tile.className = "card-tile";
+        tile.onclick = () => openCardModal(card.number);
+
+        const imgHtml = card.image 
+          ? `<img src="${card.image}" alt="${card.name}">`
+          : `<span style="font-size:1.8rem; color:var(--mauve); opacity:0.8;">✦</span>`;
+
+        const statusText = (card.general || card.description) 
+          ? "✓ Annotée" 
+          : "En attente";
+
+        tile.innerHTML = `
+          <div class="card-thumb-box">
+            <span class="card-badge">${card.number}</span>
+            ${imgHtml}
+          </div>
+          <div class="card-tile-name">${card.name}</div>
+          <div class="card-tile-status">${statusText}</div>
+        `;
+        container.appendChild(tile);
+      });
+    }
+
+    function filterCards(query) {
+      const q = query.toLowerCase().trim();
+      if (!q) {
+        renderCardsGrid(cardsCache);
+        return;
+      }
+      const filtered = cardsCache.filter(c => 
+        c.number.toString() === q ||
+        c.name.toLowerCase().includes(q) ||
+        (c.keywords && c.keywords.toLowerCase().includes(q))
+      );
+      renderCardsGrid(filtered);
+    }
+
+    function openCardModal(num) {
+      currentEditingCardNum = num;
+      const card = cardsCache.find(c => c.number === num);
+      if (!card) return;
+
+      document.getElementById("modal-card-title").innerText = `Lame ${card.number} — ${card.name}`;
+      document.getElementById("modal-card-num-text").innerText = card.number;
+
+      const img = document.getElementById("modal-card-img");
+      const ph = document.getElementById("modal-card-placeholder");
+      if (card.image) {
+        img.src = card.image;
+        img.style.display = "block";
+        ph.style.display = "none";
+      } else {
+        img.style.display = "none";
+        ph.style.display = "block";
+      }
+
+      document.getElementById("edit-name").value = card.name || "";
+      document.getElementById("edit-keywords").value = card.keywords || "";
+      document.getElementById("edit-description").value = card.description || "";
+      document.getElementById("edit-general").value = card.general || "";
+      document.getElementById("edit-positive").value = card.positive || "";
+      document.getElementById("edit-negative").value = card.negative || "";
+      document.getElementById("edit-love").value = card.love || "";
+      document.getElementById("edit-work").value = card.work || "";
+      document.getElementById("edit-money").value = card.money || "";
+      document.getElementById("edit-spirituality").value = card.spirituality || "";
+      document.getElementById("edit-advice").value = card.advice || "";
+      document.getElementById("edit-warning").value = card.warning || "";
+
+      document.getElementById("card-modal").classList.add("active");
+    }
+
+    function closeCardModal() {
+      document.getElementById("card-modal").classList.remove("active");
+      currentEditingCardNum = null;
+    }
+
+    function handleCardPhotoUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        // Redimensionnement fluide pour stockage local optimisé
+        compressImage(e.target.result, 800, (compressed) => {
+          const card = cardsCache.find(c => c.number === currentEditingCardNum);
+          if (card) {
+            card.image = compressed;
+            document.getElementById("modal-card-img").src = compressed;
+            document.getElementById("modal-card-img").style.display = "block";
+            document.getElementById("modal-card-placeholder").style.display = "none";
+          }
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function saveCardEdits() {
+      if (!currentEditingCardNum) return;
+      const card = cardsCache.find(c => c.number === currentEditingCardNum);
+      if (!card) return;
+
+      card.name = document.getElementById("edit-name").value.trim() || card.name;
+      card.keywords = document.getElementById("edit-keywords").value.trim();
+      card.description = document.getElementById("edit-description").value.trim();
+      card.general = document.getElementById("edit-general").value.trim();
+      card.positive = document.getElementById("edit-positive").value.trim();
+      card.negative = document.getElementById("edit-negative").value.trim();
+      card.love = document.getElementById("edit-love").value.trim();
+      card.work = document.getElementById("edit-work").value.trim();
+      card.money = document.getElementById("edit-money").value.trim();
+      card.spirituality = document.getElementById("edit-spirituality").value.trim();
+      card.advice = document.getElementById("edit-advice").value.trim();
+      card.warning = document.getElementById("edit-warning").value.trim();
+      card.isFilled = !!(card.general || card.keywords || card.description);
+
+      const tx = dbInstance.transaction("cards", "readwrite");
+      tx.objectStore("cards").put(card);
+      await new Promise(r => tx.oncomplete = r);
+
+      updateFilledCounter();
+      renderCardsGrid();
+      populateAssociationSelects();
+      closeCardModal();
+      alert(`La fiche de la carte ${card.number} (${card.name}) a été enregistrée avec succès.`);
+    }
+
+    /* =========================================================================
+       3. RECONNAISSANCE PHOTOGRAPHIQUE & GESTION DES TIRAGES
+       ========================================================================= */
+    const SPREAD_CONFIGS = {
+      "1": [{ label: "Message du jour", pos: 1 }],
+      "3-ppf": [
+        { label: "1. Passé / Origine", pos: 1 },
+        { label: "2. Présent / Situation", pos: 2 },
+        { label: "3. Futur / Évolution", pos: 3 }
+      ],
+      "3-soc": [
+        { label: "1. La Situation", pos: 1 },
+        { label: "2. L'Obstacle", pos: 2 },
+        { label: "3. Le Conseil", pos: 3 }
+      ],
+      "5": [
+        { label: "1. Pour / Atout", pos: 1 },
+        { label: "2. Contre / Défi", pos: 2 },
+        { label: "3. Dynamique actuelle", pos: 3 },
+        { label: "4. Conseil de l'Oracle", pos: 4 },
+        { label: "5. Issue prévisible", pos: 5 }
+      ],
+      "7": [
+        { label: "1. L'Âme du consultant", pos: 1 },
+        { label: "2. Le Climat émotionnel", pos: 2 },
+        { label: "3. Le Mental & Idées", pos: 3 },
+        { label: "4. Le Plan matériel", pos: 4 },
+        { label: "5. Ce qui apporte de l'aide", pos: 5 },
+        { label: "6. Ce qui fait obstruction", pos: 6 },
+        { label: "7. La Clé supérieure", pos: 7 }
+      ],
+      "libre": [
+        { label: "Position 1", pos: 1 },
+        { label: "Position 2", pos: 2 },
+        { label: "Position 3", pos: 3 }
+      ]
+    };
+
+    function changeSpreadMethod(methodKey) {
+      const cfg = SPREAD_CONFIGS[methodKey] || SPREAD_CONFIGS["3-ppf"];
+      currentSpreadSlots = cfg.map(item => ({ ...item, cardNum: null }));
+      renderSpreadBoard();
+    }
+
+    function renderSpreadBoard() {
+      const board = document.getElementById("spread-board");
+      if (!board) return;
+      board.innerHTML = "";
+
+      currentSpreadSlots.forEach((slot, index) => {
+        const slotEl = document.createElement("div");
+        slotEl.className = `slot-item ${slot.cardNum ? 'filled' : ''}`;
+        slotEl.onclick = () => manualPickForSlot(index);
+
+        if (slot.cardNum) {
+          const card = cardsCache.find(c => c.number === slot.cardNum);
+          const thumbHtml = card && card.image 
+            ? `<img src="${card.image}" style="width:100%; height:80px; object-fit:cover; border-radius:4px; margin-bottom:4px;">`
+            : `<div style="font-size:1.3rem; color:var(--lilas); margin:6px 0;">#${slot.cardNum}</div>`;
+
+          slotEl.innerHTML = `
+            <span class="slot-title">${slot.label}</span>
+            ${thumbHtml}
+            <strong style="font-size:0.75rem; color:var(--silver);">${card ? card.name : 'Lame '+slot.cardNum}</strong>
+            <span style="font-size:0.6rem; color:var(--lilas); margin-top:2px;">(Changer)</span>
+          `;
+        } else {
+          slotEl.innerHTML = `
+            <span class="slot-title">${slot.label}</span>
+            <div style="font-size:1.6rem; color:var(--purple-royal); margin:8px 0;">+</div>
+            <span style="font-size:0.65rem; color:var(--silver-muted);">Choisir la carte</span>
+          `;
+        }
+        board.appendChild(slotEl);
+      });
+    }
+
+    function manualPickForSlot(slotIndex) {
+      const val = prompt(`Entrez le numéro (1 à 57) pour « ${currentSpreadSlots[slotIndex].label} » :`);
+      if (!val) return;
+      const num = parseInt(val.trim(), 10);
+      if (isNaN(num) || num < 1 || num > 57) {
+        alert("Numéro invalide. Choisissez une carte entre 1 et 57.");
+        return;
+      }
+      currentSpreadSlots[slotIndex].cardNum = num;
+      renderSpreadBoard();
+    }
+
+    function handleSpreadPhoto(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        compressImage(e.target.result, 1200, (compressed) => {
+          spreadPhotoDataUrl = compressed;
+          const preview = document.getElementById("spread-photo-preview");
+          preview.src = compressed;
+          document.getElementById("spread-photo-container").style.display = "block";
+          document.getElementById("scan-warn").style.display = "flex";
+
+          // La photo sert de référence visuelle ; les cartes sont choisies manuellement.
+          const input = prompt(
+            "Identification manuelle : indiquez les numéros des cartes dans l'ordre des positions (ex. : 15, 28, 43). Aucune reconnaissance automatique n'est effectuée."
+          );
+
+          if (input) {
+            const list = input.split(/[, -]+/).map(n => parseInt(n.trim(), 10)).filter(n => n >= 1 && n <= 57);
+            list.forEach((num, idx) => {
+              if (currentSpreadSlots[idx]) {
+                currentSpreadSlots[idx].cardNum = num;
+              }
+            });
+            renderSpreadBoard();
+          }
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+
+    /* =========================================================================
+       4. MOTEUR D'INTERPRÉTATION RICHE EN 9 RUBRIQUES
+       Priorité absolue aux fiches rédigées par l'utilisatrice.
+       ========================================================================= */
+    function generateSpreadInterpretation() {
+      const missing = currentSpreadSlots.filter(s => !s.cardNum);
+      if (missing.length > 0) {
+        alert("Veuillez renseigner toutes les positions du tirage avant de lancer l'interprétation.");
+        return;
+      }
+
+      const domain = document.getElementById("spread-domain").value;
+      const question = document.getElementById("spread-question").value.trim() || "Guidance générale pour mon cheminement";
+      const cardsInSpread = currentSpreadSlots.map(s => cardsCache.find(c => c.number === s.cardNum));
+
+      // 1. Présentation des cartes
+      let rep1 = `<ul style="padding-left:18px;">`;
+      cardsInSpread.forEach((c, i) => {
+        const kw = c.keywords ? `(Mots-clés : ${c.keywords})` : `<em>[Mots-clés en attente de vos notes]</em>`;
+        rep1 += `<li><strong>${currentSpreadSlots[i].label} :</strong> Lame ${c.number} — <strong>${c.name}</strong> ${kw}</li>`;
+      });
+      rep1 += `</ul>`;
+
+      // 2. Signification selon position
+      let rep2 = "";
+      cardsInSpread.forEach((c, i) => {
+        const posName = currentSpreadSlots[i].label;
+        const domInterpretation = getDomainText(c, domain);
+        rep2 += `
+          <div style="margin-bottom:12px; padding-left:8px; border-left:2px solid var(--mauve);">
+            <strong style="color:var(--lilas);">${posName} — ${c.name} (#${c.number})</strong>
+            <p style="margin-top:4px;">${c.general || "<em>[Signification générale non encore saisie dans votre fiche. Rendez-vous dans « Mes 57 Cartes » pour enrichir cette lame.]</em>"}</p>
+            <p style="margin-top:4px; font-size:0.83rem; color:var(--lilas-pale);"><strong>Écho dans le domaine « ${domain} » :</strong> ${domInterpretation}</p>
+          </div>
+        `;
+      });
+
+      // 3. Associations
+      let rep3 = generateSpreadAssociationsAnalysis(cardsInSpread);
+
+      // 4. Énergie générale
+      let rep4 = generateSpreadEnergy(cardsInSpread);
+
+      // 5. Analyse approfondie de la question
+      let rep5 = `
+        <p><strong>Votre question :</strong> « ${escapeHtml(question)} »</p>
+        <p><strong>Domaine :</strong> ${escapeHtml(domain)}</p>
+        <p style="margin-top:6px;">Cette synthèse locale s’appuie sur les significations que vous avez renseignées dans les fiches des cartes. Elle ne fait pas appel à une intelligence artificielle et ne prétend pas déduire une signification absente de vos notes.</p>
+      `;
+
+      // 6. Évolution possible
+      const lastCard = cardsInSpread[cardsInSpread.length - 1];
+      let rep6 = `
+        <p><strong>Carte de la dernière position :</strong> ${escapeHtml(lastCard.name)} (#${lastCard.number}).</p>
+        <p style="margin-top:4px;">${lastCard.positive || lastCard.general ? escapeHtml(lastCard.positive || lastCard.general) : "Vous n’avez pas encore renseigné de signification positive ou générale pour cette carte. Complétez sa fiche pour enrichir cette partie."}</p>
+      `;
+
+      // 7. Obstacles & Points de vigilance
+      let rep7 = "";
+      const warningsFound = cardsInSpread.map(c => c.warning || c.negative).filter(Boolean);
+      if (warningsFound.length > 0) {
+        rep7 = `<ul style="padding-left:18px;">` + warningsFound.map(w => `<li>${w}</li>`).join("") + `</ul>`;
+      } else {
+        rep7 = `<p>Aucun avertissement n’a été saisi dans les fiches des cartes de ce tirage. Cela ne signifie pas qu’il n’existe aucun point de vigilance : vos fiches sont peut-être simplement incomplètes.</p>`;
+      }
+
+      // 8. Conseils
+      let rep8 = "";
+      const advicesFound = cardsInSpread.map(c => c.advice).filter(Boolean);
+      if (advicesFound.length > 0) {
+        rep8 = `<ul style="padding-left:18px;">` + advicesFound.map(a => `<li>${a}</li>`).join("") + `</ul>`;
+      } else {
+        rep8 = `<p>Aucun conseil n’a été saisi dans les fiches des cartes de ce tirage. Ajoutez vos propres conseils dans la bibliothèque pour personnaliser cette rubrique.</p>`;
+      }
+
+      // 9. Message final de l'Oracle
+      let rep9 = `
+        <p style="font-style:italic; color:var(--lilas-pale);">
+          Cette lecture est un support personnel de réflexion. Elle ne prédit pas avec certitude l’avenir et ne remplace pas votre discernement. Les interprétations dépendent des notes que vous avez enregistrées pour chaque lame.
+        </p>
+      `;
+
+      // Injection dans le DOM
+      document.getElementById("rep-1-cards").innerHTML = rep1;
+      document.getElementById("rep-2-positions").innerHTML = rep2;
+      document.getElementById("rep-3-associations").innerHTML = rep3;
+      document.getElementById("rep-4-energy").innerHTML = rep4;
+      document.getElementById("rep-5-question").innerHTML = rep5;
+      document.getElementById("rep-6-evolution").innerHTML = rep6;
+      document.getElementById("rep-7-obstacles").innerHTML = rep7;
+      document.getElementById("rep-8-advice").innerHTML = rep8;
+      document.getElementById("rep-9-final").innerHTML = rep9;
+
+      document.getElementById("no-interpretation-msg").style.display = "none";
+      document.getElementById("interpretation-results").style.display = "block";
+
+      // Garder en mémoire pour sauvegarde
+      currentInterpretationData = {
+        date: new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }),
+        question,
+        domain,
+        cards: cardsInSpread.map(c => ({ number: c.number, name: c.name })),
+        photo: spreadPhotoDataUrl
+      };
+
+      // Basculer vers l'onglet Interprétation
+      switchTab('view-interpretation', document.querySelectorAll('.nav-btn')[2]);
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>\"']/g, ch => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[ch]));
+    }
+
+    function getDomainText(card, domain) {
+      if (domain.includes("Amour") || domain.includes("Couple")) return card.love || card.general || "Fiche sentimentale à compléter.";
+      if (domain.includes("Travail")) return card.work || card.general || "Fiche professionnelle à compléter.";
+      if (domain.includes("Argent")) return card.money || card.general || "Fiche financière à compléter.";
+      if (domain.includes("Spiritualité")) return card.spirituality || card.general || "Fiche spirituelle à compléter.";
+      return card.general || "Fiche générale à compléter.";
+    }
+
+    function generateSpreadAssociationsAnalysis(cards) {
+      let html = "";
+      if (cards.length >= 2) {
+        html += `<p><strong>Association centrale (${cards[0].name} + ${cards[1].name}) :</strong> `;
+        html += `Le dialogue entre la lame <em>${cards[0].name}</em> et la lame <em>${cards[1].name}</em> crée un mouvement où l'impulsion originelle est testée ou enrichie par la seconde énergie.</p>`;
+      }
+      if (cards.length >= 3) {
+        html += `<p style="margin-top:6px;"><strong>Trilogie d'ensemble :</strong> La rencontre avec <em>${cards[2].name}</em> permet de stabiliser ou de trancher le débat énergétique soulevé par les deux premières cartes.</p>`;
+      }
+      return html || "<p>Carte isolée : l'énergie se concentre exclusivement sur son message direct.</p>";
+    }
+
+    function generateSpreadEnergy(cards) {
+      const odd = cards.filter(c => c.number % 2 !== 0).length;
+      const even = cards.length - odd;
+      if (odd > even) {
+        return `<p><strong>Vibration Yang (Action & Dynamisme) :</strong> La majorité des lames indique qu'il est temps de concrétiser, de communiquer clairement et de prendre des initiatives actives.</p>`;
+      } else {
+        return `<p><strong>Vibration Yin (Intériorisation & Sagesse) :</strong> Le tirage invite au recueillement, à la patience et à l'écoute des signaux invisibles plutôt qu'au passage en force.</p>`;
+      }
+    }
+
+    /* =========================================================================
+       5. RUBRIQUE ASSOCIATIONS (ANALYSE DE 2 OU 3 CARTES)
+       ========================================================================= */
+    function populateAssociationSelects() {
+      const s1 = document.getElementById("assoc-card-1");
+      const s2 = document.getElementById("assoc-card-2");
+      const s3 = document.getElementById("assoc-card-3");
+      if (!s1 || !s2 || !s3) return;
+
+      const opts = cardsCache.map(c => `<option value="${c.number}">${c.number}. ${c.name}</option>`).join("");
+      s1.innerHTML = opts;
+      s2.innerHTML = opts;
+      s3.innerHTML = `<option value="">-- Aucune --</option>` + opts;
+
+      if (cardsCache.length > 1) {
+        s2.selectedIndex = 1;
+      }
+    }
+
+    function runAssociationStudy() {
+      const n1 = parseInt(document.getElementById("assoc-card-1").value, 10);
+      const n2 = parseInt(document.getElementById("assoc-card-2").value, 10);
+      const n3Val = document.getElementById("assoc-card-3").value;
+      const n3 = n3Val ? parseInt(n3Val, 10) : null;
+
+      const c1 = cardsCache.find(c => c.number === n1);
+      const c2 = cardsCache.find(c => c.number === n2);
+      const c3 = n3 ? cardsCache.find(c => c.number === n3) : null;
+
+      const box = document.getElementById("assoc-result-box");
+      const out = document.getElementById("assoc-content");
+      if (!c1 || !c2) return;
+
+      box.style.display = "block";
+
+      let res = `
+        <p><strong>Lames associées :</strong> ${c1.name} (#${c1.number}) et ${c2.name} (#${c2.number}) ${c3 ? `avec ${c3.name} (#${c3.number})` : ''}</p>
+        <div style="margin-top:10px;">
+          <p><strong>• Résonance commune :</strong> ${c1.keywords || c1.name} ⟷ ${c2.keywords || c2.name}.</p>
+          <p style="margin-top:6px;"><strong>• Influence réciproque :</strong> Lorsque ${c1.name} rencontre ${c2.name}, l'aspect <em>${c1.positive || "actif"}</em> de la première se trouve modéré ou catalysé par <em>${c2.general || "l'énergie de la seconde"}</em>.</p>
+          <p style="margin-top:6px;"><strong>• Complémentarité & Synthèse :</strong> Cette alliance souligne la nécessité de concilier ${c1.name} avec les impératifs posés par ${c2.name}.</p>
+        </div>
+      `;
+      out.innerHTML = res;
+    }
+
+    /* =========================================================================
+       6. HISTORIQUE, SAUVEGARDES ET NOTES
+       ========================================================================= */
+    async function saveCurrentSpreadToHistory() {
+      if (!currentInterpretationData) return;
+      const notes = prompt("Ajouter une note personnelle pour cet enregistrement dans votre journal (optionnel) :", "");
+      
+      const record = {
+        ...currentInterpretationData,
+        userNotes: notes || ""
+      };
+
+      const tx = dbInstance.transaction("history", "readwrite");
+      tx.objectStore("history").add(record);
+      await new Promise(r => tx.oncomplete = r);
+
+      alert("Tirage enregistré dans votre Journal personnel !");
+      renderHistoryList();
+    }
+
+    function renderHistoryList() {
+      const container = document.getElementById("history-container");
+      if (!container) return;
+      container.innerHTML = "";
+
+      const query = (document.getElementById("history-search")?.value || "").toLowerCase().trim();
+      const domFilter = document.getElementById("history-filter-domain")?.value || "";
+
+      const tx = dbInstance.transaction("history", "readonly");
+      const req = tx.objectStore("history").getAll();
+      req.onsuccess = () => {
+        let items = req.result.reverse();
+
+        if (domFilter) {
+          items = items.filter(it => it.domain && it.domain.includes(domFilter));
+        }
+        if (query) {
+          items = items.filter(it => 
+            String(it.question || "").toLowerCase().includes(query) ||
+            (it.cards || []).some(c => String(c.name || "").toLowerCase().includes(query))
+          );
+        }
+
+        if (items.length === 0) {
+          container.innerHTML = `<p style="text-align:center; padding:30px; color:var(--silver-muted);">Aucun tirage trouvé dans l'historique.</p>`;
+          return;
+        }
+
+        items.forEach(it => {
+          const cardEl = document.createElement("div");
+          cardEl.className = "report-section";
+          cardEl.innerHTML = `
+            <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--lilas); margin-bottom:4px;">
+              <span>${it.date}</span>
+              <span>${it.domain}</span>
+            </div>
+            <h4 style="color:var(--lilas-pale); margin-bottom:6px;">« ${it.question} »</h4>
+            <p style="font-size:0.82rem; color:var(--silver-muted);">Lames : ${it.cards.map(c => `${c.name} (#${c.number})`).join(", ")}</p>
+            ${it.photo ? `<img src="${it.photo}" style="width:100%; max-height:120px; object-fit:cover; border-radius:6px; margin:8px 0; border:1px solid var(--border-silver);">` : ''}
+            ${it.userNotes ? `<p style="font-size:0.8rem; background:rgba(28,13,54,0.6); padding:6px; border-radius:6px; margin-top:6px;"><strong>Mes notes :</strong> ${it.userNotes}</p>` : ''}
+          `;
+          container.appendChild(cardEl);
+        });
+      };
+    }
+
+    function savePersonalNotes(text) {
+      localStorage.setItem("oracle_trivision_notes", text);
+      const st = document.getElementById("notes-status");
+      if (st) {
+        st.innerText = "Notes sauvegardées.";
+        setTimeout(() => st.innerText = "Enregistrement automatique actif.", 2000);
+      }
+    }
+
+    function loadPersonalNotes() {
+      const saved = localStorage.getItem("oracle_trivision_notes");
+      if (saved) {
+        const el = document.getElementById("personal-journal");
+        if (el) el.value = saved;
+      }
+    }
+
+    /* =========================================================================
+       7. PARAMÈTRES, EXPORT & IMPORT DE SÉCURITÉ
+       ========================================================================= */
+    async function exportFullBackup() {
+      const txCards = dbInstance.transaction("cards", "readonly");
+      const allCards = await new Promise(r => {
+        const req = txCards.objectStore("cards").getAll();
+        req.onsuccess = () => r(req.result);
+      });
+
+      const txHist = dbInstance.transaction("history", "readonly");
+      const allHistory = await new Promise(r => {
+        const req = txHist.objectStore("history").getAll();
+        req.onsuccess = () => r(req.result);
+      });
+
+      const fullData = {
+        app: "ORACLE TRIVISION",
+        version: "57_CARTES",
+        exportDate: new Date().toISOString(),
+        cards: allCards,
+        history: allHistory,
+        notes: localStorage.getItem("oracle_trivision_notes") || ""
+      };
+
+      const blob = new Blob([JSON.stringify(fullData, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `ORACLE_TRIVISION_SAUVEGARDE_${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importFullBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (!data.cards || !Array.isArray(data.cards)) {
+            alert("Fichier de sauvegarde non reconnu.");
+            return;
+          }
+
+          if (confirm("Confirmez-vous la restauration de cette sauvegarde ? Vos données actuelles seront mises à jour.")) {
+            const tx = dbInstance.transaction(["cards", "history"], "readwrite");
+            const cStore = tx.objectStore("cards");
+            data.cards.forEach(card => cStore.put(card));
+
+            if (data.history && Array.isArray(data.history)) {
+              const hStore = tx.objectStore("history");
+              data.history.forEach(item => hStore.put(item));
+            }
+
+            await new Promise(r => tx.oncomplete = r);
+            if (data.notes) {
+              localStorage.setItem("oracle_trivision_notes", data.notes);
+              loadPersonalNotes();
+            }
+
+            await loadCardsCache();
+            renderCardsGrid();
+            renderHistoryList();
+            alert("Sauvegarde restaurée avec succès !");
+          }
+        } catch (err) {
+          alert("Erreur lors de la lecture du fichier de sauvegarde.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function saveApiKey(key) {
+      localStorage.setItem("oracle_trivision_apikey", key.trim());
+      alert("Clé enregistrée localement.");
+    }
+
+    /* Utilitaire de compression photo mobile */
+    function compressImage(base64Str, maxWidth, callback) {
+      const img = new Image();
+      img.src = base64Str;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        callback(canvas.toDataURL("image/jpeg", 0.78));
+      };
+    }
+
+    /* Navigation entre onglets */
+    function switchTab(viewId, btnElement) {
+      document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+
+      const target = document.getElementById(viewId);
+      if (target) target.classList.add("active");
+      if (btnElement) btnElement.classList.add("active");
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      if (viewId === "view-cartes") renderCardsGrid();
+      if (viewId === "view-historique") renderHistoryList();
+      if (viewId === "view-associations") populateAssociationSelects();
+    }
+
+    // Installation PWA (nécessite une adresse HTTPS et manifest/service worker).
+    let deferredInstallPrompt = null;
+    window.addEventListener("beforeinstallprompt", (event) => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      const btn = document.getElementById("install-app-btn");
+      if (btn) btn.disabled = false;
+    });
+    async function installApp() {
+      if (!deferredInstallPrompt) {
+        alert("Pour installer l’application : ouvrez-la dans Chrome, touchez ⋮ puis « Installer l’application » ou « Ajouter à l’écran d’accueil ». L’installation nécessite une adresse HTTPS.");
+        return;
+      }
+      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.userChoice;
+      deferredInstallPrompt = null;
+      const btn = document.getElementById("install-app-btn");
+      if (btn) btn.disabled = true;
+    }
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(err => console.warn("Service worker non disponible :", err));
+      });
+    }
+
+    // Démarrage de l'application
+    window.addEventListener("DOMContentLoaded", async () => {
+      await initDatabase();
+      changeSpreadMethod("3-ppf");
+      renderCardsGrid();
+      populateAssociationSelects();
+      loadPersonalNotes();
+
+    });
+  </script>
+</body>
+</html>
